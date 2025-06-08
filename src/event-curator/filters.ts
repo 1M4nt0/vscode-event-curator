@@ -12,16 +12,18 @@ const schemesToExclude: string[] = ["git", "gitfs", "output", "vscode"];
 
 /**
  * Determines if a DocumentSelector specifies a language constraint.
- * 
+ *
  * A DocumentSelector can specify a language in several ways:
  * - As a string (which represents a language ID)
- * - As an array containing language IDs or DocumentFilters with language properties
+ * - As an array containing language IDs or DocumentFilters with
+ *    language properties
  * - As a DocumentFilter object with a language property
- * 
+ *
  * @param selector The DocumentSelector to check
- * @returns true if the selector specifies a language constraint, false otherwise
+ * @returns true if the selector specifies a language constraint,
+ *    false otherwise
  */
-function selectorSpecifiesLanguage(selector: DocumentSelector): boolean {
+export function selectorSpecifiesLanguage(selector: DocumentSelector): boolean {
   if (typeof selector === "string") {
     return !!selector;
   }
@@ -42,28 +44,20 @@ function selectorSpecifiesLanguage(selector: DocumentSelector): boolean {
 export function relevantChangeEventsByLanguage(
   selector: DocumentSelector,
 ): EventStreamFunction<TextDocumentChangeEvent, TextDocumentChangeEvent, []> {
-  const shouldFilterByLanguage = selectorSpecifiesLanguage(selector);
   return (event) => {
-    if (!shouldFilterByLanguage) {
-      return event;
-    }
     return select((e) => !!languages.match(selector, e.document), event);
-  };
+  }
 }
 
 export function relevantTextDocumentsByLanguage(
   selector: DocumentSelector,
 ): EventStreamFunction<TextDocument, TextDocument, []> {
-  const shouldFilterByLanguage = selectorSpecifiesLanguage(selector);
   return (event) => {
-    if (!shouldFilterByLanguage) {
-      return event;
-    }
     return select(
       (document) => !!languages.match(selector, document),
       event,
     );
-  };
+  }
 }
 
 export function relevantChangeEventsByScheme(
